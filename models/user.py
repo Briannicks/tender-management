@@ -2,32 +2,49 @@ import hashlib
 
 
 class User:
-    def __init__(self, name, email, password_hash, role="user"):
-        self.name = name
-        self.email = email
-        self.__password_hash = password_hash
-        self.role = role
+    """Base user. Admin inherits from this (role-based access)."""
+
+    role = "user"  
+
+    def __init__(self, name, email, password_hash):
+        self._name = name
+        self._email = email
+        self._password_hash = password_hash
+
+    @property
+    def name(self):
+        return self._name
+
+    @name.setter
+    def name(self, value):
+        if not value or not value.strip():
+            raise ValueError("Name cannot be empty.")
+        self._name = value.strip()
+
+    @property
+    def email(self):
+        return self._email
 
     @staticmethod
     def hash_password(password):
-        return hashlib.sha256(password.encode()).hexdigest()
+        return hashlib.sha256(password.encode("utf-8")).hexdigest()
 
     def check_password(self, password):
-        return self.__password_hash == self.hash_password(password)
-
-    @property
-    def password_hash(self):
-        return self.__password_hash
+        return self._password_hash == self.hash_password(password)
 
     def to_dict(self):
         return {
-            "name": self.name,
-            "email": self.email,
-            "password_hash": self.__password_hash,
+            "name": self._name,
+            "email": self._email,
+            "password_hash": self._password_hash,
             "role": self.role,
         }
 
+    def __str__(self):
+        return f"{self._name} ({self.role}) <{self._email}>"
+
 
 class Admin(User):
-    def __init__(self, name, email, password_hash):
-        super().__init__(name, email, password_hash, role="admin")
+    """Same as User, but with elevated role for admin-only actions."""
+
+    role = "admin"

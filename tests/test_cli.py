@@ -1,45 +1,45 @@
-import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import patch
 
-from main import BookCLI
-from models.book import Book
+from main import App
 
 
-class CLITests(unittest.TestCase):
+class TestCliFlow(unittest.TestCase):
+    """End-to-end smoke test through the App object directly (no subprocess)."""
+
     def setUp(self):
-        self.temp_dir = tempfile.TemporaryDirectory()
-        folder = Path(self.temp_dir.name)
-        self.cli = BookCLI(folder / "users.json", folder / "books.json")
+        self.app = App()
+        self.app.auth.users_file = "tests/_tmp_cli_users.json"
+        self.app.tenders._file_path = "tests/_tmp_cli_tenders.json"
 
     def tearDown(self):
-        self.temp_dir.cleanup()
+        for f in (self.app.auth.users_file, self.app.tenders._file_path):
+            p = Path(f)
+            if p.exists():
+                p.unlink()
 
-    @patch("builtins.input", side_effect=["Jane", "jane@example.com", "secret123", "user"])
-    def test_register_sets_current_user(self, _):
-        self.cli.register()
-        self.assertIsNotNone(self.cli.current_user)
-        self.assertEqual(self.cli.current_user.email, "jane@example.com")
+    def test_full_flow(self):
+        class Args:
+            pass
 
-    @patch("builtins.input", side_effect=["jane@example.com", "secret123"])
-    def test_login_sets_current_user(self, _):
-        self.cli.auth.register("Jane", "jane@example.com", "secret123", "user")
-        self.cli.login()
-        self.assertEqual(self.cli.current_user.name, "Jane")
+        reg = Args()
+        reg.name, reg.email, reg.password, reg.role = "Ada", "ada@test.com", "secret", "admin"
+        self.app.cmd_register(reg)
 
-    @patch("builtins.input", side_effect=["1984", "George Orwell", "Fiction"])
-    def test_add_book_for_logged_in_user(self, _):
-        self.cli.current_user = self.cli.auth.register("Jane", "jane@example.com", "secret123", "user")
-        self.cli.add_book()
-        self.assertEqual(len(self.cli.collection.view_books()), 1)
+        login = Args()
+        login.email, login.password = "ada@test.com", "secret"
+        self.app.cmd_login(login)
+        self.assertIsNotNone(self.app.current_user)
 
-    @patch("builtins.input", side_effect=["1984"])
-    def test_admin_can_delete_book(self, _):
-        self.cli.current_user = self.cli.auth.register("Admin", "admin@example.com", "secret123", "admin")
-        self.cli.collection.add_book(Book("1984", "George Orwell", "Fiction"))
-        self.cli.delete_book()
-        self.assertEqual(self.cli.collection.view_books(), [])
+        add = Args()
+        add.title, add.description, add.deadline, add.budget = "Road works", "desc", "2026-01-01", 500000
+        self.app.cmd_add_tender(add)
+        self.assertEqual(len(self.app.tenders.all()), 1)
+
+        close = Args()
+        close.tender_id = 1
+        self.app.cmd_close_tender(close)
+        self.assertEqual(self.app.tenders.find_by_id(1).status, "closed")
 
 
 if __name__ == "__main__":

@@ -1,7 +1,11 @@
 import unittest
 
-from models.user import Admin, User
 from utils.decorators import admin_required, login_required
+
+
+class FakeUser:
+    def __init__(self, role):
+        self.role = role
 
 
 class FakeApp:
@@ -9,33 +13,30 @@ class FakeApp:
         self.current_user = current_user
 
     @login_required
-    def user_action(self):
-        return "user action"
+    def protected_action(self):
+        return "ok"
 
     @admin_required
     def admin_action(self):
-        return "admin action"
+        return "ok"
 
 
-class DecoratorTests(unittest.TestCase):
-    def test_login_required_blocks_guest(self):
-        app = FakeApp()
-        self.assertIsNone(app.user_action())
+class TestDecorators(unittest.TestCase):
+    def test_login_required_blocks_when_logged_out(self):
+        app = FakeApp(current_user=None)
+        self.assertIsNone(app.protected_action())
 
-    def test_login_required_allows_logged_in_user(self):
-        user = User("Jane", "jane@example.com", User.hash_password("pass"))
-        app = FakeApp(user)
-        self.assertEqual(app.user_action(), "user action")
+    def test_login_required_allows_when_logged_in(self):
+        app = FakeApp(current_user=FakeUser("user"))
+        self.assertEqual(app.protected_action(), "ok")
 
-    def test_admin_required_blocks_normal_user(self):
-        user = User("Jane", "jane@example.com", User.hash_password("pass"))
-        app = FakeApp(user)
+    def test_admin_required_blocks_regular_user(self):
+        app = FakeApp(current_user=FakeUser("user"))
         self.assertIsNone(app.admin_action())
 
     def test_admin_required_allows_admin(self):
-        admin = Admin("Admin", "admin@example.com", User.hash_password("pass"))
-        app = FakeApp(admin)
-        self.assertEqual(app.admin_action(), "admin action")
+        app = FakeApp(current_user=FakeUser("admin"))
+        self.assertEqual(app.admin_action(), "ok")
 
 
 if __name__ == "__main__":
