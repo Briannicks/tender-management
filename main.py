@@ -33,3 +33,37 @@ from utils.auth import AuthManager
 from utils.decorators import admin_required, login_required
 
 console = Console()
+
+class App:
+    def __init__(self):
+        self.current_user = None
+        self.auth = AuthManager()
+        self.tenders = TenderCollection()
+
+    # ---------------- auth actions ----------------
+    def register(self):
+        console.print("\n[bold]-- Register --[/bold]")
+        name = Prompt.ask("Name")
+        email = Prompt.ask("Email")
+        password = Prompt.ask("Password", password=True)
+        role = Prompt.ask("Role", choices=["user", "admin"], default="user")
+        try:
+            user = self.auth.register(name, email, password, role)
+            console.print(f"[green]Registered successfully:[/green] {user}")
+        except ValueError as e:
+            console.print(f"[red]Error:[/red] {e}")
+
+    def login(self):
+        console.print("\n[bold]-- Login --[/bold]")
+        email = Prompt.ask("Email")
+        password = Prompt.ask("Password", password=True)
+        user = self.auth.login(email, password)
+        if user is None:
+            console.print("[red]Invalid email or password.[/red]")
+            return
+        self.current_user = user
+        console.print(f"[green]Logged in as[/green] {user}")
+
+    def logout(self):
+        console.print(f"[yellow]Logged out {self.current_user.name}.[/yellow]")
+        self.current_user = None
