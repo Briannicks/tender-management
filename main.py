@@ -102,6 +102,7 @@ class App:
         @admin_required
         def close_tender(self):
             console.print("\n[bold]-- Close Tender --[/bold]")
+            self.list_tenders()
             tender_id = Prompt.ask("Tender ID to close")
             tender_item = self.tenders.find_by_id(_safe_int(tender_id)) 
             if tender_item is None:
@@ -110,3 +111,7 @@ class App:
             tender_item.close()
             self.tenders.close(tender_item)
             console.print(f"[green]Tender closed:[/green] {tender_item}")
+             
+        @admin_required
+        def award_tenders(self):
+            console.print("\n[bold]-- Award Tender --[/bold]")
