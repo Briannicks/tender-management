@@ -67,20 +67,31 @@ class App:
     def logout(self):
         console.print(f"[yellow]Logged out {self.current_user.name}.[/yellow]")
         self.current_user = None
-  #---------------- tender actions ----------------
-@login_required
-def create_tender(self): 
-    console.print("\n[bold]-- Create Tender --[/bold]") 
-    items = self.tenders.all()
-    if not items:
-        console.print("[yellow]No tenders yet.[/yellow]")
-    return
+    # ---------------- tender actions ----------------
+    @login_required
+    def create_tender(self):
+        console.print("\n[bold]-- Create Tender --[/bold]")
+        items = self.tenders.all()
+        if not items:
+            console.print("[yellow]No tenders yet.[/yellow]")
+            return
 
-    table = Table(title="Tenders", border_style="cyan")
-    for col in ("ID", "Title", "Status", "Budget", "Deadline", "Created By"):
-     table.add_column(col)
-        
-     status_colors = {"open": "green", "closed": "red", "awarded": "blue"}
-    for t in items:
+        table = Table(title="Tenders", border_style="cyan")
+        for col in ("ID", "Title", "Status", "Budget", "Deadline", "Created By"):
+            table.add_column(col)
+
+        status_colors = {"open": "green", "closed": "red", "awarded": "blue"}
+        for t in items:
             color = status_colors.get(t.status, "white")
             table.add_row(
+                str(t.id),
+                t.title,
+                f"[{color}]{t.status}[/{color}]",
+                str(t.budget),
+                str(t.deadline),
+                str(t.created_by),
+            )
+        console.print(table) 
+        @admin_required
+        def close_tender(self):
+            console.print()
