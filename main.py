@@ -80,3 +80,7 @@ def create_tender(self):
     for col in ("ID", "Title", "Status", "Budget", "Deadline", "Created By"):
      table.add_column(col)
         
+     status_colors = {"open": "green", "closed": "red", "awarded": "blue"}
+    for t in items:
+            color = status_colors.get(t.status, "white")
+            table.add_row(
