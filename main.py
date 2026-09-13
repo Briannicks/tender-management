@@ -67,3 +67,4 @@ class App:
     def logout(self):
         console.print(f"[yellow]Logged out {self.current_user.name}.[/yellow]")
         self.current_user = None
+         
