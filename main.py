@@ -71,5 +71,8 @@ class App:
 @login_required
 def create_tender(self): 
     console.print("\n[bold]-- Create Tender --[/bold]") 
-    self.list_tenders()   
+    items = self.tenders.all()
+    if not items:
+        console.print("[yellow]No tenders yet.[/yellow]")
+    return
         
