@@ -123,3 +123,4 @@ class App:
                  return
             tender_item.award()
             self.tenders.award(tender_item)
+            console.print(f"[green]Tender awarded:[/green] {tender_item}")
