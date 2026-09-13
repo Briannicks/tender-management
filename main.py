@@ -120,3 +120,6 @@ class App:
             tender_item = self.tenders.find_by_id(_safe_int(tender_id))
             if tender_item is None:
                  console.print("[red]Tender not found.[/red]")
+                 return
+            tender_item.award()
+            
