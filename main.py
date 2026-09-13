@@ -122,4 +122,4 @@ class App:
                  console.print("[red]Tender not found.[/red]")
                  return
             tender_item.award()
-            
+            self.tenders.award(tender_item)
