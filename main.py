@@ -70,5 +70,6 @@ class App:
   #---------------- tender actions ----------------
 @login_required
 def create_tender(self): 
-    console.print("\n[bold]-- Create Tender --[/bold]")    
+    console.print("\n[bold]-- Create Tender --[/bold]") 
+    self.list_tenders()   
         
