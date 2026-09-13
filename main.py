@@ -119,3 +119,4 @@ class App:
             tender_id= Prompt.ask("Tender ID to award")
             tender_item = self.tenders.find_by_id(_safe_int(tender_id))
             if tender_item is None:
+                 console.print("[red]Tender not found.[/red]")
