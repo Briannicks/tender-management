@@ -68,5 +68,7 @@ class App:
         console.print(f"[yellow]Logged out {self.current_user.name}.[/yellow]")
         self.current_user = None
   #---------------- tender actions ----------------
-  @login_required
-  def create_tender(self):       
+@login_required
+def create_tender(self): 
+    console.print("\n[bold]-- Create Tender --[/bold]")    
+        
