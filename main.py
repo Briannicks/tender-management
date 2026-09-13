@@ -96,3 +96,5 @@ class App:
         @admin_required
         def close_tender(self):
             console.print("\n[bold]-- Close Tender --[/bold]")
+            tender_id = Prompt.ask("Tender ID to close")
+            
