@@ -3,7 +3,7 @@ import sys
 from rich.console import Console
 from rich.panel import Panel
 from rich.prompt import Prompt
-from rich.table import Table
+from rich.table import Table, table
 
 # Try importing Tender, with fallback if models/tender.py is still empty
 try:
@@ -75,4 +75,8 @@ def create_tender(self):
     if not items:
         console.print("[yellow]No tenders yet.[/yellow]")
     return
+
+    table = Table(title="Tenders", border_style="cyan")
+    for col in ("ID", "Title", "Status", "Budget", "Deadline", "Created By"):
+     table.add_column(col)
         
