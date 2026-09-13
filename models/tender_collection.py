@@ -1,81 +1,41 @@
-from pathlib import Path
-
+from models.tender import Tender
 from utils.storage import load_json, save_json
 
 
-class Book:
-    def __init__(self, title, author, genre, status="Available", added_by=""):
-        self.title = title
-        self.author = author
-        self.genre = genre
-        self.status = status
-        self.added_by = added_by
+class TenderCollection:
+    """Wraps all tender persistence so nothing else touches the JSON file."""
 
-    def to_dict(self):
-        return {
-            "title": self.title,
-            "author": self.author,
-            "genre": self.genre,
-            "status": self.status,
-            "added_by": self.added_by,
-        }
+    def __init__(self, file_path="data/tenders.json"):
+        self._file_path = file_path
 
-    @classmethod
-    def from_dict(cls, data):
-        return cls(
-            data["title"],
-            data["author"],
-            data["genre"],
-            data.get("status", "Available"),
-            data.get("added_by", ""),
-        )
+    def add(self, tender):
+        tenders = self._load_all()
+        tenders.append(tender)
+        self._save_all(tenders)
+        return tender
 
+    def all(self):
+        return self._load_all()
 
-class BookCollection:
-    def __init__(self, books_file="data/books.json"):
-        self.books_file = Path(books_file)
+    def find_by_id(self, tender_id):
+        for tender in self._load_all():
+            if tender.id == tender_id:
+                return tender
+        return None
 
-    def _load_books(self):
-        return [Book.from_dict(item) for item in load_json(self.books_file)]
+    def filter_by_status(self, status):
+        return [t for t in self._load_all() if t.status == status]
 
-    def _save_books(self, books):
-        save_json(self.books_file, [book.to_dict() for book in books])
+    def update(self, tender):
+        tenders = self._load_all()
+        for i, existing in enumerate(tenders):
+            if existing.id == tender.id:
+                tenders[i] = tender
+                break
+        self._save_all(tenders)
 
-    def add_book(self, book):
-        books = self._load_books()
-        books.append(book)
-        self._save_books(books)
+    def _load_all(self):
+        return [Tender.from_dict(d) for d in load_json(self._file_path)]
 
-    def view_books(self):
-        return self._load_books()
-
-    def search_books(self, search_text):
-        search_text = search_text.lower()
-        return [
-            book
-            for book in self._load_books()
-            if search_text in book.title.lower()
-            or search_text in book.author.lower()
-        ]
-
-    def update_status(self, title, new_status):
-        books = self._load_books()
-
-        for book in books:
-            if book.title.lower() == title.lower():
-                book.status = new_status
-                self._save_books(books)
-                return True
-
-        return False
-
-    def delete_book(self, title):
-        books = self._load_books()
-
-        for book in books:
-            if book.title.lower() == title.lower():
-                books.remove(book)
-                self._save_books(books)
-                return True
-
-        return False
+    def _save_all(self, tenders):
+        save_json(self._file_path, [t.to_dict() for t in tenders])
