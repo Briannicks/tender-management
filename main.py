@@ -115,3 +115,5 @@ class App:
         @admin_required
         def award_tenders(self):
             console.print("\n[bold]-- Award Tender --[/bold]")
+            self.list_tenders()
+            tender_id= Prompt.ask("Tender ID to award")
