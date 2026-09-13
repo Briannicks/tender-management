@@ -108,3 +108,5 @@ class App:
                 console.print("[red]Tender not found.[/red]")
                 return
             tender_item.close()
+            self.tenders.close(tender_item)
+            console.print(f"[green]Tender closed:[/green] {tender_item}")
