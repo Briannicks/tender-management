@@ -92,6 +92,7 @@ class App:
                 str(t.created_by),
             )
         console.print(table) 
+        
         @admin_required
         def close_tender(self):
-            console.print()
+            console.print("\n[bold]-- Close Tender --[/bold]")
