@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import sys
 
 from rich.console import Console
@@ -6,56 +5,8 @@ from rich.panel import Panel
 from rich.prompt import Prompt
 from rich.table import Table
 
-# Safe import handling for models.tender
-try:
-    from models.tender import Tender
-except (ImportError, AttributeError, Exception):
-    try:
-        from models.tender import tender as Tender
-    except (ImportError, AttributeError, Exception):
-        class Tender:
-            def __init__(self, title, description, deadline, budget, created_by, status="open", id=None):
-                self.id = id
-                self.title = title
-                self.description = description
-                self.deadline = deadline
-                self.budget = budget
-                self.created_by = created_by
-                self.status = status
-
-            def close(self):
-                self.status = "closed"
-
-            def award(self):
-                self.status = "awarded"
-
-# Safe import handling for models.tender_collection
-try:
-    from models.tender_collection import TenderCollection
-except (ImportError, AttributeError, Exception):
-    try:
-        from models.tender_collection import tender_collection as TenderCollection
-    except (ImportError, AttributeError, Exception):
-        class TenderCollection:
-            def __init__(self):
-                self._tenders = []
-
-            def add(self, tender):
-                tender.id = len(self._tenders) + 1
-                self._tenders.append(tender)
-
-            def all(self):
-                return self._tenders
-
-            def find_by_id(self, tender_id):
-                for t in self._tenders:
-                    if getattr(t, 'id', None) == tender_id:
-                        return t
-                return None
-
-            def update(self, tender):
-                pass
-
+from models.tender import Tender
+from models.tender_collection import TenderCollection
 from utils.auth import AuthManager
 from utils.decorators import admin_required, login_required
 
@@ -73,7 +24,7 @@ class App:
         console.print("\n[bold]-- Register --[/bold]")
         name = Prompt.ask("Name")
         email = Prompt.ask("Email")
-        password = Prompt.ask("Password")
+        password = Prompt.ask("Password", password=True)
         role = Prompt.ask("Role", choices=["user", "admin"], default="user")
         try:
             user = self.auth.register(name, email, password, role)
@@ -84,7 +35,7 @@ class App:
     def login(self):
         console.print("\n[bold]-- Login --[/bold]")
         email = Prompt.ask("Email")
-        password = Prompt.ask("Password")
+        password = Prompt.ask("Password", password=True)
         user = self.auth.login(email, password)
         if user is None:
             console.print("[red]Invalid email or password.[/red]")
@@ -105,15 +56,15 @@ class App:
         deadline = Prompt.ask("Deadline (YYYY-MM-DD)")
         budget = Prompt.ask("Budget")
         try:
-            tender_item = Tender(
+            tender = Tender(
                 title=title,
                 description=description,
                 deadline=deadline,
                 budget=budget,
                 created_by=self.current_user.email,
             )
-            self.tenders.add(tender_item)
-            console.print(f"[green]Tender created:[/green] {tender_item}")
+            self.tenders.add(tender)
+            console.print(f"[green]Tender created:[/green] {tender}")
         except ValueError as e:
             console.print(f"[red]Error:[/red] {e}")
 
@@ -147,26 +98,26 @@ class App:
         console.print("\n[bold]-- Close Tender --[/bold]")
         self.list_tenders()
         tender_id = Prompt.ask("Tender ID to close")
-        tender_item = self.tenders.find_by_id(_safe_int(tender_id))
-        if tender_item is None:
+        tender = self.tenders.find_by_id(_safe_int(tender_id))
+        if tender is None:
             console.print("[red]Tender not found.[/red]")
             return
-        tender_item.close()
-        self.tenders.update(tender_item)
-        console.print(f"[green]Tender closed:[/green] {tender_item}")
+        tender.close()
+        self.tenders.update(tender)
+        console.print(f"[green]Tender closed:[/green] {tender}")
 
     @admin_required
     def award_tender(self):
         console.print("\n[bold]-- Award Tender --[/bold]")
         self.list_tenders()
         tender_id = Prompt.ask("Tender ID to award")
-        tender_item = self.tenders.find_by_id(_safe_int(tender_id))
-        if tender_item is None:
+        tender = self.tenders.find_by_id(_safe_int(tender_id))
+        if tender is None:
             console.print("[red]Tender not found.[/red]")
             return
-        tender_item.award()
-        self.tenders.update(tender_item)
-        console.print(f"[green]Tender awarded:[/green] {tender_item}")
+        tender.award()
+        self.tenders.update(tender)
+        console.print(f"[green]Tender awarded:[/green] {tender}")
 
 
 def _safe_int(value):
@@ -177,15 +128,13 @@ def _safe_int(value):
 
 
 def show_logged_out_menu():
-    console.print(
-        Panel(
-            "[bold cyan]1[/bold cyan]. Register\n"
-            "[bold cyan]2[/bold cyan]. Login\n"
-            "[bold cyan]3[/bold cyan]. Exit",
-            title="Tender Management System",
-            border_style="cyan",
-        )
-    )
+    console.print(Panel(
+        "[bold cyan]1[/bold cyan]. Register\n"
+        "[bold cyan]2[/bold cyan]. Login\n"
+        "[bold cyan]3[/bold cyan]. Exit",
+        title="Tender Management System",
+        border_style="cyan",
+    ))
 
 
 def show_logged_in_menu(app):
@@ -202,13 +151,11 @@ def show_logged_in_menu(app):
         "[bold cyan]5[/bold cyan]. Logout\n"
         "[bold cyan]6[/bold cyan]. Exit"
     )
-    console.print(
-        Panel(
-            lines,
-            title=f"Welcome, {app.current_user.name} ({app.current_user.role})",
-            border_style="magenta",
-        )
-    )
+    console.print(Panel(
+        lines,
+        title=f"Welcome, {app.current_user.name} ({app.current_user.role})",
+        border_style="magenta",
+    ))
 
 
 def run():
@@ -249,5 +196,3 @@ def run():
 
 if __name__ == "__main__":
     run()
-=======
->>>>>>> origin/main
