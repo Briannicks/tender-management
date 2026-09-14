@@ -3,7 +3,7 @@ from utils.storage import load_json, save_json
 
 
 class TenderCollection:
-    """Wraps all tender persistence so nothing else touches the JSON file."""
+    
 
     def __init__(self, file_path="data/tenders.json"):
         self._file_path = file_path
