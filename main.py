@@ -72,7 +72,7 @@ class App:
         console.print("\n[bold]-- Register --[/bold]")
         name = Prompt.ask("Name")
         email = Prompt.ask("Email")
-        password = Prompt.ask("Password", password=True)
+        password = Prompt.ask("Password")
         role = Prompt.ask("Role", choices=["user", "admin"], default="user")
         try:
             user = self.auth.register(name, email, password, role)
@@ -83,7 +83,7 @@ class App:
     def login(self):
         console.print("\n[bold]-- Login --[/bold]")
         email = Prompt.ask("Email")
-        password = Prompt.ask("Password", password=True)
+        password = Prompt.ask("Password")
         user = self.auth.login(email, password)
         if user is None:
             console.print("[red]Invalid email or password.[/red]")
