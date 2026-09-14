@@ -76,6 +76,29 @@ class Tender:
 
     def award(self):
         self._status = "awarded"
+    def to_dict(self):
+        return {
+            "id": self._id,
+            "title": self._title,
+            "description": self._description,
+            "deadline": self._deadline,
+            "budget": self._budget,
+            "created_by": self._created_by,
+            "status": self._status,
+        }
 
- 
+    @classmethod
+    def from_dict(cls, data):
+        return cls(
+            title=data["title"],
+            description=data.get("description", ""),
+            deadline=data.get("deadline"),
+            budget=data.get("budget"),
+            created_by=data["created_by"],
+            status=data.get("status", "open"),
+            tender_id=data["id"],
+        )
+
+    def __str__(self):
+        return f"[{self._id}] {self._title} - {self._status} (budget: {self._budget}, deadline: {self._deadline})"
 
