@@ -18,5 +18,64 @@ class Tender:
         self._deadline = deadline
         self._budget = budget
         self._created_by = created_by
-        self.status = status  
+        self.status = status 
+    @property
+    def id(self):
+        return self._id
+
+    @property
+    def title(self):
+        return self._title
+
+    @title.setter
+    def title(self, value):
+        if not value or not value.strip():
+            raise ValueError("Tender title cannot be empty.")
+        self._title = value.strip()
+
+    @property
+    def created_by(self):
+        return self._created_by
+
+    @property
+    def description(self):
+        return self._description
+
+    @description.setter
+    def description(self, value):
+        self._description = value or ""
+
+    @property
+    def deadline(self):
+        return self._deadline
+
+    @deadline.setter
+    def deadline(self, value):
+        self._deadline = value
+
+    @property
+    def budget(self):
+        return self._budget
+
+    @budget.setter
+    def budget(self, value):
+        self._budget = value
+
+    @property
+    def status(self):
+        return self._status
+
+    @status.setter
+    def status(self, value):
+        if value not in Tender.STATUSES:
+            raise ValueError(f"Status must be one of {Tender.STATUSES}.")
+        self._status = value
+
+    def close(self):
+        self._status = "closed"
+
+    def award(self):
+        self._status = "awarded"
+
+ 
 
