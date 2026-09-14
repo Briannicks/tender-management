@@ -4,7 +4,11 @@ import hashlib
 class User:
     """Base user. Admin inherits from this (role-based access)."""
 
+<<<<<<< HEAD
+    role = "user"  
+=======
     role = "user"  # class attribute, overridden by Admin
+>>>>>>> origin/main
 
     def __init__(self, name, email, password_hash):
         self._name = name

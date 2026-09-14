@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from models.user import Admin, User
 from utils.storage import load_json, save_json
 from utils.validators import not_empty, valid_email
@@ -7,7 +5,7 @@ from utils.validators import not_empty, valid_email
 
 class AuthManager:
     def __init__(self, users_file="data/users.json"):
-        self.users_file = Path(users_file)
+        self.users_file = users_file
 
     def register(self, name, email, password, role="user"):
         name = name.strip()
@@ -30,11 +28,7 @@ class AuthManager:
                 raise ValueError("An account with that email already exists.")
 
         password_hash = User.hash_password(password)
-
-        if role == "admin":
-            user = Admin(name, email, password_hash)
-        else:
-            user = User(name, email, password_hash)
+        user = Admin(name, email, password_hash) if role == "admin" else User(name, email, password_hash)
 
         users.append(user.to_dict())
         save_json(self.users_file, users)
@@ -47,17 +41,9 @@ class AuthManager:
         for saved_user in users:
             if saved_user["email"].lower() == email:
                 if saved_user["role"] == "admin":
-                    user = Admin(
-                        saved_user["name"],
-                        saved_user["email"],
-                        saved_user["password_hash"],
-                    )
+                    user = Admin(saved_user["name"], saved_user["email"], saved_user["password_hash"])
                 else:
-                    user = User(
-                        saved_user["name"],
-                        saved_user["email"],
-                        saved_user["password_hash"],
-                    )
+                    user = User(saved_user["name"], saved_user["email"], saved_user["password_hash"])
 
                 if user.check_password(password):
                     return user
