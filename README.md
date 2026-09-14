@@ -1,5 +1,5 @@
-<<<<<<< HEAD
-=======
+
+
 # Tender Management System
 
 A command-line application for managing tenders, built with Python.
@@ -43,4 +43,4 @@ You'll see a menu. Pick a number and follow the prompts.
 5. Logout or exit anytime from the menu.
 
 ## Project structure
->>>>>>> origin/main
+
