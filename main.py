@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import sys
 
 from rich.console import Console
@@ -248,3 +249,5 @@ def run():
 
 if __name__ == "__main__":
     run()
+=======
+>>>>>>> origin/main
