@@ -19,7 +19,7 @@ class App:
         self.auth = AuthManager()
         self.tenders = TenderCollection()
 
-    # ---------------- auth actions ----------------
+    
     def register(self):
         console.print("\n[bold]-- Register --[/bold]")
         name = Prompt.ask("Name")
@@ -47,7 +47,7 @@ class App:
         console.print(f"[yellow]Logged out {self.current_user.name}.[/yellow]")
         self.current_user = None
 
-    # ---------------- tender actions ----------------
+   
     @login_required
     def add_tender(self):
         console.print("\n[bold]-- Add Tender --[/bold]")
