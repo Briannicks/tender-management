@@ -1,3 +1,4 @@
+
 from models.tender import Tender
 from utils.storage import load_json, save_json
 
@@ -39,3 +40,4 @@ class TenderCollection:
 
     def _save_all(self, tenders):
         save_json(self._file_path, [t.to_dict() for t in tenders])
+
