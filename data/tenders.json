@@ -1,1 +1,20 @@
-[]
+[
+    {
+        "id": 1,
+        "title": "tender",
+        "description": "tender",
+        "deadline": "34567",
+        "budget": "45500",
+        "created_by": "kibee@gmail.com",
+        "status": "closed"
+    },
+    {
+        "id": 2,
+        "title": "tenderrr",
+        "description": "n/a",
+        "deadline": "456789",
+        "budget": "4560",
+        "created_by": "cheruu2@gmail.com",
+        "status": "awarded"
+    }
+]
