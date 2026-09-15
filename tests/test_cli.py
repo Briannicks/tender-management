@@ -19,27 +19,32 @@ class TestCliFlow(unittest.TestCase):
                 p.unlink()
 
     def test_full_flow(self):
-        class Args:
-            pass
+        # register + login directly through AuthManager, since register()/login()
+        # on App use input() prompts meant for the interactive menu
+        user = self.app.auth.register("Ada", "ada@test.com", "secret", role="admin")
+        self.assertEqual(user.role, "admin")
 
-        reg = Args()
-        reg.name, reg.email, reg.password, reg.role = "Ada", "ada@test.com", "secret", "admin"
-        self.app.cmd_register(reg)
+        logged_in = self.app.auth.login("ada@test.com", "secret")
+        self.assertIsNotNone(logged_in)
+        self.app.current_user = logged_in
 
-        login = Args()
-        login.email, login.password = "ada@test.com", "secret"
-        self.app.cmd_login(login)
-        self.assertIsNotNone(self.app.current_user)
-
-        add = Args()
-        add.title, add.description, add.deadline, add.budget = "Road works", "desc", "2026-01-01", 500000
-        self.app.cmd_add_tender(add)
+        
+        from models.tender import Tender
+        tender = Tender(
+            title="Road works",
+            description="desc",
+            deadline="2026-01-01",
+            budget=500000,
+            created_by=self.app.current_user.email,
+        )
+        self.app.tenders.add(tender)
         self.assertEqual(len(self.app.tenders.all()), 1)
 
-        close = Args()
-        close.tender_id = 1
-        self.app.cmd_close_tender(close)
-        self.assertEqual(self.app.tenders.find_by_id(1).status, "closed")
+        
+        saved_tender = self.app.tenders.find_by_id(tender.id)
+        saved_tender.close()
+        self.app.tenders.update(saved_tender)
+        self.assertEqual(self.app.tenders.find_by_id(tender.id).status, "closed")
 
 
 if __name__ == "__main__":

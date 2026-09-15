@@ -44,3 +44,26 @@ You'll see a menu. Pick a number and follow the prompts.
 
 ## Project structure
 
+```
+main.py                    
+models/
+  user.py                  
+  tender.py                
+  tender_collection.py     
+utils/
+  auth.py                  
+  decorators.py            
+  storage.py                
+  validators.py             
+data/
+  users.json               
+  tenders.json               
+tests/                     
+
+```
+
+## Project management
+
+We used Trello to track tasks across the team:
+[Tender Management System board](https://trello.com/invite/b/6aa3d2f1afbe997f5d4222b5/ATTI31abc2607c1a75953e857fae2f93c7161695CE4E/tender-management-system)
+
